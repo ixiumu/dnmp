@@ -42,8 +42,9 @@ services:
     volumes:
       - ./conf/mysql.cnf:/etc/mysql/conf.d/mysql.cnf:ro
       - ./mysql/:/var/lib/mysql/:rw
+      - ./log/mysql/:/var/log/mysql/:rw
     environment:
-      TZ: "Asia/Shanghai"
+      # https://dev.mysql.com/doc/refman/5.7/en/docker-mysql-more-topics.html
       MYSQL_ROOT_PASSWORD: "123456"
     restart: always
     networks:
