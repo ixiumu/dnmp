@@ -1,0 +1,54 @@
+version: "3"
+services:
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./www/:/var/www/html/:rw
+      - ./conf/conf.d/:/etc/nginx/conf.d/:rw
+      - ./conf/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./log/nginx/:/var/log/nginx/:rw
+    environment:
+      TZ: "Asia/Shanghai"
+    restart: always
+    networks:
+      - frontend
+
+  php:
+    build:
+      context: ./docker/php-fpm/
+      args:
+        PHP_VERSION: 7.3
+        REPOSITORIES_CDN: "mirrors.aliyun.com"
+        PHP_EXTENSIONS: "pdo_mysql mysqli opcache"
+    volumes:
+      - ./www/:/var/www/html/:rw
+      - ./conf/php.ini:/usr/local/etc/php/php.ini:ro
+      - ./conf/php-fpm.conf:/usr/local/etc/php-fpm.d/www.conf:ro
+      - ./log/php/:/var/log/php/:rw
+    environment:
+      TZ: "Asia/Shanghai"
+    restart: always
+    networks:
+      - frontend
+      - backend
+
+  mysql:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./conf/mysql.cnf:/etc/mysql/conf.d/mysql.cnf:ro
+      - ./mysql/:/var/lib/mysql/:rw
+    environment:
+      TZ: "Asia/Shanghai"
+      MYSQL_ROOT_PASSWORD: "123456"
+    restart: always
+    networks:
+      - backend
+
+networks:
+  frontend:
+  backend:
