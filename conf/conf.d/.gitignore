@@ -1,4 +1,6 @@
-*
+*.key
+*.pem
+*.crt
 !.gitignore
-!certs/localhost/
+!certs/localhost/*
 !localhost.conf
